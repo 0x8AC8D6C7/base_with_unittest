@@ -78,9 +78,9 @@ class OverloadedNewAndDelete {
 int OverloadedNewAndDelete::g_new_count = 0;
 int OverloadedNewAndDelete::g_delete_count = 0;
 
-// scoped_ptr<ConDecLogger> PassThru(scoped_ptr<ConDecLogger> logger) {
-//   return logger.Pass();
-// }
+scoped_ptr<ConDecLogger> PassThru(scoped_ptr<ConDecLogger> logger) {
+    return logger.PassAs<ConDecLogger>();
+}
 
 void GrabAndDrop(scoped_ptr<ConDecLogger> logger) {
 }
