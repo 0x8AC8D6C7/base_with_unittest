@@ -448,6 +448,7 @@ install(TARGETS base
     CONFIGURATIONS Release
 )
 
+add_subdirectory(test)
 
 target_link_libraries(${BASE_TARGET_NAME}
     ${BASE_LINK_LIBRARIES}
