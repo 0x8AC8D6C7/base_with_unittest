@@ -37,65 +37,6 @@ class ConDecLogger : public ConDecLoggerParent {
   DISALLOW_COPY_AND_ASSIGN(ConDecLogger);
 };
 
-struct CountingDeleter {
-  explicit CountingDeleter(int* count) : count_(count) {}
-  inline void operator()(double* ptr) const {
-    (*count_)++;
-  }
-  int* count_;
-};
-
-// Used to test assignment of convertible deleters.
-struct CountingDeleterChild : public CountingDeleter {
-  explicit CountingDeleterChild(int* count) : CountingDeleter(count) {}
-};
-
-class OverloadedNewAndDelete {
- public:
-  void* operator new(size_t size) {
-    g_new_count++;
-    return malloc(size);
-  }
-
-  void operator delete(void* ptr) {
-    g_delete_count++;
-    free(ptr);
-  }
-
-  static void ResetCounters() {
-    g_new_count = 0;
-    g_delete_count = 0;
-  }
-
-  static int new_count() { return g_new_count; }
-  static int delete_count() { return g_delete_count; }
-
- private:
-  static int g_new_count;
-  static int g_delete_count;
-};
-
-int OverloadedNewAndDelete::g_new_count = 0;
-int OverloadedNewAndDelete::g_delete_count = 0;
-
-scoped_ptr<ConDecLogger> PassThru(scoped_ptr<ConDecLogger> logger) {
-    return logger.PassAs<ConDecLogger>();
-}
-
-void GrabAndDrop(scoped_ptr<ConDecLogger> logger) {
-}
-
-// Do not delete this function!  It's existence is to test that you can
-// return a temporarily constructed version of the scoper.
-scoped_ptr<ConDecLogger> TestReturnOfType(int* constructed) {
-  return scoped_ptr<ConDecLogger>(new ConDecLogger(constructed));
-}
-
-scoped_ptr<ConDecLoggerParent> UpcastUsingPassAs(
-    scoped_ptr<ConDecLogger> object) {
-  return object.PassAs<ConDecLoggerParent>();
-}
-
 }  // namespace
 
 TEST(ScopedPtrTest, ScopedPtr) {
